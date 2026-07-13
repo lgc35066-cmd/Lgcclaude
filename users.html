@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>المستخدمون | LGC Smart Farm OS</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar"></nav>
+    <div class="content">
+      <header class="topbar" id="topbar"></header>
+      <main class="main-area">
+
+        <div class="card">
+          <div class="card-header">
+            <h3>إدارة المستخدمين والصلاحيات</h3>
+            <button class="btn btn-primary" onclick="alert('سيتم فتح نموذج POST /api/users')">إضافة مستخدم</button>
+          </div>
+          <table>
+            <thead><tr><th>الاسم</th><th>اسم المستخدم</th><th>الدور الوظيفي</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+            <tbody id="users-body"></tbody>
+          </table>
+        </div>
+
+        <div class="card" style="margin-top:18px;">
+          <div class="card-header"><h3>الأدوار الوظيفية المتاحة</h3></div>
+          <div class="grid grid-3">
+            <div class="card"><strong>مدير النظام</strong><p style="font-size:12px; color:var(--text-muted);">صلاحية كاملة على النظام والمستخدمين</p></div>
+            <div class="card"><strong>مدير المزرعة</strong><p style="font-size:12px; color:var(--text-muted);">إشراف تشغيلي على جميع الوحدات</p></div>
+            <div class="card"><strong>مسؤول الري</strong><p style="font-size:12px; color:var(--text-muted);">تحكم كامل بوحدة الري فقط</p></div>
+            <div class="card"><strong>مسؤول الطاقة</strong><p style="font-size:12px; color:var(--text-muted);">تحكم كامل بوحدة الطاقة فقط</p></div>
+            <div class="card"><strong>فني الصيانة</strong><p style="font-size:12px; color:var(--text-muted);">إدارة مهام الصيانة والأعطال</p></div>
+            <div class="card"><strong>عامل</strong><p style="font-size:12px; color:var(--text-muted);">صلاحية عرض محدودة فقط</p></div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    buildSidebar("users");
+    buildTopbar("إدارة المستخدمين");
+
+    const DEMO_USERS = [
+      { name: "مدير النظام", username: "admin", role: "مدير النظام", active: true },
+      { name: "محمد الطرابلسي", username: "m.tripoli", role: "مدير المزرعة", active: true },
+      { name: "سالم الفزاني", username: "s.fezzan", role: "مسؤول الري", active: true },
+      { name: "خالد المرغني", username: "k.marghani", role: "فني الصيانة", active: false },
+    ];
+
+    document.getElementById("users-body").innerHTML = DEMO_USERS.map(u => `
+      <tr>
+        <td>${u.name}</td><td>${u.username}</td><td>${u.role}</td>
+        <td><span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">${u.active ? 'نشط' : 'موقوف'}</span></td>
+        <td><button class="btn btn-outline" style="padding:6px 12px; font-size:12px;">تعديل</button></td>
+      </tr>`).join("");
+  </script>
+</body>
+</html>

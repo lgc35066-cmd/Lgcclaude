@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إدارة المحاصيل | LGC Smart Farm OS</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar"></nav>
+    <div class="content">
+      <header class="topbar" id="topbar"></header>
+      <main class="main-area">
+
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-header">
+            <h3>المحاصيل الحالية</h3>
+            <button class="btn btn-primary" onclick="alert('سيتم فتح نموذج POST /api/crops')">إضافة محصول</button>
+          </div>
+          <table>
+            <thead>
+              <tr><th>المحصول</th><th>القطاع</th><th>مرحلة النمو</th><th>الإنتاج المتوقع</th><th>الاحتياج المائي/يوم</th><th>الحالة الصحية</th></tr>
+            </thead>
+            <tbody id="crops-body"></tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    buildSidebar("crops");
+    buildTopbar("إدارة المحاصيل");
+
+    const DEMO_CROPS = [
+      { name: "طماطم", zone: "القطاع 1", stage: "الإزهار", yield_: "3.2 طن", water: "1,800 لتر", health: "سليم" },
+      { name: "زيتون", zone: "القطاع 2", stage: "النضج", yield_: "1.1 طن", water: "900 لتر", health: "سليم" },
+      { name: "شعير", zone: "القطاع 3", stage: "الإنبات", yield_: "2.0 طن", water: "1,200 لتر", health: "يحتاج متابعة" },
+      { name: "فلفل", zone: "القطاع 4", stage: "النمو الخضري", yield_: "0.8 طن", water: "700 لتر", health: "سليم" },
+    ];
+
+    function healthBadge(h) {
+      return h === "سليم" ? `<span class="badge badge-success">${h}</span>` : `<span class="badge badge-warning">${h}</span>`;
+    }
+
+    document.getElementById("crops-body").innerHTML = DEMO_CROPS.map(c => `
+      <tr>
+        <td>${c.name}</td><td>${c.zone}</td><td>${c.stage}</td>
+        <td>${c.yield_}</td><td>${c.water}</td><td>${healthBadge(c.health)}</td>
+      </tr>`).join("");
+  </script>
+</body>
+</html>

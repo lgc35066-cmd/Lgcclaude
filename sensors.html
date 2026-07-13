@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>الحساسات | LGC Smart Farm OS</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar"></nav>
+    <div class="content">
+      <header class="topbar" id="topbar"></header>
+      <main class="main-area">
+
+        <div class="card">
+          <div class="card-header">
+            <h3>حالة الحساسات الميدانية</h3>
+            <span style="font-size:12px; color:var(--text-muted);">تُغذّى عبر ESP32 / ESP8266 / Raspberry Pi عبر MQTT أو REST</span>
+          </div>
+          <table>
+            <thead><tr><th>نوع الحساس</th><th>الموقع</th><th>آخر قراءة</th><th>الوحدة</th><th>حالة الاتصال</th><th>آخر تحديث</th></tr></thead>
+            <tbody id="sensors-body"></tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    buildSidebar("sensors");
+    buildTopbar("مراقبة الحساسات");
+
+    const DEMO_SENSORS = [
+      { type: "رطوبة التربة", zone: "القطاع 1", value: 34, unit: "%", online: true, updated: "قبل دقيقتين" },
+      { type: "حرارة التربة", zone: "القطاع 1", value: 27, unit: "°C", online: true, updated: "قبل دقيقتين" },
+      { type: "حرارة الجو", zone: "المزرعة", value: 31, unit: "°C", online: true, updated: "قبل 5 دقائق" },
+      { type: "رطوبة الجو", zone: "المزرعة", value: 45, unit: "%", online: true, updated: "قبل 5 دقائق" },
+      { type: "منسوب الخزان", zone: "الخزان الرئيسي", value: 68, unit: "%", online: true, updated: "قبل 3 دقائق" },
+      { type: "جهد البطارية", zone: "منظومة الطاقة", value: 12.6, unit: "V", online: true, updated: "قبل دقيقة" },
+      { type: "إنتاج شمسي", zone: "منظومة الطاقة", value: 6.2, unit: "kW", online: true, updated: "قبل دقيقة" },
+      { type: "رطوبة التربة", zone: "القطاع 4", value: 0, unit: "%", online: false, updated: "منذ 3 ساعات" },
+    ];
+
+    document.getElementById("sensors-body").innerHTML = DEMO_SENSORS.map(s => `
+      <tr>
+        <td>${s.type}</td><td>${s.zone}</td>
+        <td>${s.online ? s.value : "—"}</td><td>${s.unit}</td>
+        <td><span class="dot ${s.online ? 'dot-online' : 'dot-offline'}"></span>${s.online ? "متصل" : "غير متصل"}</td>
+        <td>${s.updated}</td>
+      </tr>`).join("");
+  </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>إدارة الطاقة | LGC Smart Farm OS</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar"></nav>
+    <div class="content">
+      <header class="topbar" id="topbar"></header>
+      <main class="main-area">
+
+        <div class="grid grid-4" style="margin-bottom:18px;">
+          <div class="card stat-card"><div class="stat-icon">☀️</div><div class="stat-label">إنتاج حالي</div><div class="stat-value">6.2 kW</div></div>
+          <div class="card stat-card"><div class="stat-icon">🔌</div><div class="stat-label">استهلاك حالي</div><div class="stat-value">4.1 kW</div></div>
+          <div class="card stat-card"><div class="stat-icon">🔋</div><div class="stat-label">شحن البطاريات</div><div class="stat-value">81%</div></div>
+          <div class="card stat-card"><div class="stat-icon">🧯</div><div class="stat-label">حالة الانفرتر</div><div class="stat-value">يعمل بكفاءة</div></div>
+        </div>
+
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-header"><h3>الإنتاج مقابل الاستهلاك (أسبوعي)</h3></div>
+          <div class="chart-box"><canvas id="energyChart"></canvas></div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-header"><h3>الألواح الشمسية</h3></div>
+            <table>
+              <thead><tr><th>الرمز</th><th>السعة (واط)</th><th>الحالة</th></tr></thead>
+              <tbody id="panels-body"></tbody>
+            </table>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>البطاريات</h3></div>
+            <table>
+              <thead><tr><th>الرمز</th><th>الشحن</th><th>الصحة</th></tr></thead>
+              <tbody id="batteries-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    buildSidebar("energy");
+    buildTopbar("إدارة الطاقة الشمسية");
+
+    const days = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
+    new Chart(document.getElementById("energyChart"), {
+      type: "line",
+      data: {
+        labels: days,
+        datasets: [
+          { label: "الإنتاج (kWh)", data: DEMO_DATA.energySeries.production, borderColor: "#2ea85c", backgroundColor: "#2ea85c22", fill: true, tension: 0.35 },
+          { label: "الاستهلاك (kWh)", data: DEMO_DATA.energySeries.consumption, borderColor: "#c9a44c", backgroundColor: "#c9a44c22", fill: true, tension: 0.35 },
+        ],
+      },
+    });
+
+    const PANELS = [
+      { code: "PV-01", watt: 450, status: "يعمل" }, { code: "PV-02", watt: 450, status: "يعمل" }, { code: "PV-03", watt: 450, status: "صيانة" },
+    ];
+    const BATTERIES = [
+      { code: "BAT-01", charge: "85%", health: "ممتازة" }, { code: "BAT-02", charge: "22%", health: "جيدة" },
+    ];
+
+    document.getElementById("panels-body").innerHTML = PANELS.map(p => `
+      <tr><td>${p.code}</td><td>${p.watt}</td><td><span class="badge ${p.status === 'يعمل' ? 'badge-success' : 'badge-warning'}">${p.status}</span></td></tr>
+    `).join("");
+    document.getElementById("batteries-body").innerHTML = BATTERIES.map(b => `
+      <tr><td>${b.code}</td><td>${b.charge}</td><td>${b.health}</td></tr>
+    `).join("");
+  </script>
+</body>
+</html>

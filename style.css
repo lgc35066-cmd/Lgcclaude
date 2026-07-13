@@ -1,0 +1,287 @@
+/* =========================================================
+   LGC Smart Farm OS — نظام تصميم موحّد (Design System)
+   RTL بالكامل + وضع ليلي + هوية بصرية خضراء احترافية
+   ========================================================= */
+
+:root {
+  --green-900: #0b3d24;
+  --green-800: #0f4c2e;
+  --green-700: #146c3a;
+  --green-600: #1c8b4a;
+  --green-500: #2ea85c;
+  --green-100: #e5f5ea;
+  --accent-gold: #c9a44c;
+
+  --bg: #f4f7f5;
+  --surface: #ffffff;
+  --surface-alt: #eef3ef;
+  --text: #16241c;
+  --text-muted: #5b6b61;
+  --border: #dfe8e2;
+
+  --danger: #d64545;
+  --warning: #e0a721;
+  --success: var(--green-600);
+  --info: #2b7cd6;
+
+  --radius: 14px;
+  --shadow: 0 4px 18px rgba(15, 76, 46, 0.08);
+  --sidebar-width: 260px;
+  --topbar-height: 64px;
+}
+
+[data-theme="dark"] {
+  --bg: #0e1712;
+  --surface: #14231b;
+  --surface-alt: #182a20;
+  --text: #eaf3ec;
+  --text-muted: #93a89b;
+  --border: #223a2c;
+  --shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+body {
+  direction: rtl;
+  font-family: "Tajawal", "Segoe UI", Tahoma, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* ---------- الهيكل العام: الشريط الجانبي + المحتوى ---------- */
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: linear-gradient(180deg, var(--green-900), var(--green-800));
+  color: #eafaf0;
+  padding: 20px 16px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px 22px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: 16px;
+}
+
+.sidebar-brand .logo-dot {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: var(--green-500);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+  color: #06280f;
+}
+
+.sidebar-brand .brand-text strong { display: block; font-size: 15px; }
+.sidebar-brand .brand-text span { display: block; font-size: 11px; color: #a9d8bb; }
+
+.nav-group-title {
+  font-size: 11px;
+  color: #7fbb95;
+  margin: 18px 10px 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #d9f0e0;
+  margin-bottom: 3px;
+  cursor: pointer;
+}
+
+.nav-item .ico { font-size: 16px; width: 20px; text-align: center; }
+
+.nav-item:hover { background: rgba(255,255,255,0.08); }
+
+.nav-item.active {
+  background: var(--green-600);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* ---------- المحتوى ---------- */
+.content { display: flex; flex-direction: column; min-height: 100vh; }
+
+.topbar {
+  height: var(--topbar-height);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 22px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.topbar h1 { font-size: 17px; margin: 0; }
+
+.topbar-actions { display: flex; align-items: center; gap: 14px; }
+
+.icon-btn {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--green-100);
+  color: var(--green-800);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.main-area { padding: 22px; flex: 1; }
+
+/* ---------- البطاقات ---------- */
+.grid { display: grid; gap: 16px; }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+@media (max-width: 1100px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 720px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar { position: relative; height: auto; }
+  .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+
+.stat-card { display: flex; flex-direction: column; gap: 6px; }
+.stat-card .stat-label { font-size: 12px; color: var(--text-muted); }
+.stat-card .stat-value { font-size: 26px; font-weight: 800; }
+.stat-card .stat-trend { font-size: 12px; }
+.trend-up { color: var(--success); }
+.trend-down { color: var(--danger); }
+
+.stat-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  background: var(--green-100);
+  color: var(--green-700);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+[data-theme="dark"] .stat-icon { background: rgba(46,168,92,0.15); color: var(--green-500); }
+
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.card-header h3 { margin: 0; font-size: 15px; }
+
+/* ---------- الجداول ---------- */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 10px 8px; text-align: right; border-bottom: 1px solid var(--border); }
+th { color: var(--text-muted); font-weight: 600; font-size: 12px; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.badge-success { background: rgba(46,168,92,0.15); color: var(--green-600); }
+.badge-warning { background: rgba(224,167,33,0.15); color: var(--warning); }
+.badge-danger { background: rgba(214,69,69,0.15); color: var(--danger); }
+.badge-info { background: rgba(43,124,214,0.15); color: var(--info); }
+
+/* ---------- عناصر النموذج ---------- */
+.btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-primary { background: var(--green-600); color: #fff; }
+.btn-primary:hover { background: var(--green-700); }
+.btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+}
+
+/* ---------- صفحة الدخول ---------- */
+.login-wrap {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 30% 20%, var(--green-800), var(--green-900));
+}
+.login-card {
+  width: 380px;
+  background: var(--surface);
+  border-radius: 18px;
+  padding: 34px 28px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+}
+.login-card .logo-dot { margin: 0 auto 14px; width: 54px; height: 54px; font-size: 22px; }
+.login-card h2 { text-align: center; margin: 0 0 4px; }
+.login-card p.sub { text-align: center; color: var(--text-muted); margin: 0 0 24px; font-size: 13px; }
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 12px; margin-bottom: 6px; color: var(--text-muted); }
+
+/* ---------- شارة حالة الاتصال ---------- */
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-left: 6px; }
+.dot-online { background: var(--success); }
+.dot-offline { background: var(--danger); }
+
+.chart-box { position: relative; height: 260px; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }

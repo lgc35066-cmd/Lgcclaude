@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>خريطة المزرعة | LGC Smart Farm OS</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+<style>
+  .map-canvas {
+    background: var(--surface-alt);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    height: 480px;
+    position: relative;
+    overflow: hidden;
+  }
+  .map-pin {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+    box-shadow: var(--shadow);
+    white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar"></nav>
+    <div class="content">
+      <header class="topbar" id="topbar"></header>
+      <main class="main-area">
+
+        <div class="card">
+          <div class="card-header">
+            <h3>مخطط المزرعة التفاعلي</h3>
+            <span style="font-size:12px; color:var(--text-muted);">تمثيل توضيحي — يمكن استبداله بخريطة GPS فعلية (Leaflet / Mapbox) لاحقًا</span>
+          </div>
+          <div class="map-canvas" id="map-canvas"></div>
+        </div>
+
+        <div class="grid grid-4" style="margin-top:18px;">
+          <div class="card stat-card"><div class="stat-icon">🌱</div><div class="stat-label">القطاعات</div><div class="stat-value">6</div></div>
+          <div class="card stat-card"><div class="stat-icon">🛢️</div><div class="stat-label">الخزان الرئيسي</div><div class="stat-value">68٪</div></div>
+          <div class="card stat-card"><div class="stat-icon">⛲</div><div class="stat-label">البئر</div><div class="stat-value">نشط</div></div>
+          <div class="card stat-card"><div class="stat-icon">🏬</div><div class="stat-label">المستودعات</div><div class="stat-value">2</div></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    buildSidebar("farm-map");
+    buildTopbar("خريطة المزرعة");
+
+    const PINS = [
+      { label: "القطاع 1 🌾", x: "18%", y: "30%" },
+      { label: "القطاع 2 🌾", x: "40%", y: "22%" },
+      { label: "القطاع 3 🌾", x: "62%", y: "35%" },
+      { label: "القطاع 4 🌾", x: "80%", y: "25%" },
+      { label: "الخزان 🛢️", x: "50%", y: "60%" },
+      { label: "البئر ⛲", x: "35%", y: "75%" },
+      { label: "المضخة الرئيسية 🚰", x: "50%", y: "48%" },
+      { label: "منظومة الطاقة الشمسية ⚡", x: "70%", y: "70%" },
+      { label: "المستودع 🏬", x: "15%", y: "80%" },
+    ];
+
+    document.getElementById("map-canvas").innerHTML = PINS.map(p => `
+      <div class="map-pin" style="right:${p.x}; top:${p.y};">${p.label}</div>
+    `).join("");
+  </script>
+</body>
+</html>

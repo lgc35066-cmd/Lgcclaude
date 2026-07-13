@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>المساعد الذكي | LGC Smart Farm OS</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar"></nav>
+    <div class="content">
+      <header class="topbar" id="topbar"></header>
+      <main class="main-area">
+
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-header">
+            <h3>تحليل الذكاء الاصطناعي الحالي</h3>
+            <span style="font-size:12px; color:var(--text-muted);">مصدر البيانات: /api/ai/recommendations</span>
+          </div>
+          <div class="grid grid-3" id="ai-cards"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>توصيات وتنبؤات</h3></div>
+          <div id="recommendations-list"></div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    buildSidebar("ai");
+    buildTopbar("المساعد الذكي");
+
+    const insights = [
+      { icon: "💧", title: "حالة الري", text: "القطاع الثاني يحتاج ري خلال 4 ساعات تقريبًا بناءً على معدل جفاف التربة." },
+      { icon: "⚡", title: "حالة الطاقة", text: "الإنتاج الشمسي جيد اليوم ويغطي 102٪ من الاستهلاك المتوقع." },
+      { icon: "📈", title: "توقع الاستهلاك", text: "من المتوقع استهلاك 6,800 لتر مياه إضافية خلال الـ 24 ساعة القادمة." },
+    ];
+    document.getElementById("ai-cards").innerHTML = insights.map(i => `
+      <div class="card">
+        <div class="stat-icon">${i.icon}</div>
+        <h4 style="margin:6px 0;">${i.title}</h4>
+        <p style="font-size:13px; color:var(--text-muted); margin:0;">${i.text}</p>
+      </div>`).join("");
+
+    const DEMO_RECS = [
+      { type: "ري", message: "رطوبة التربة في القطاع 2 منخفضة (28٪) — يُنصح بتشغيل الري." },
+      { type: "طاقة", message: "شحن البطارية BAT-02 منخفض (22٪) — يُفضّل تقليل الأحمال غير الحرجة مؤقتًا." },
+      { type: "صيانة", message: "حساس رطوبة التربة S-14 غير متصل منذ 3 ساعات — يُنصح بإرسال فني صيانة." },
+    ];
+
+    async function loadRecommendations() {
+      let recs = DEMO_RECS;
+      try {
+        const data = await apiRequest("/ai/recommendations");
+        if (data && data.recommendations && data.recommendations.length) recs = data.recommendations;
+      } catch (e) { /* استخدام البيانات التجريبية */ }
+
+      document.getElementById("recommendations-list").innerHTML = recs.map(r => `
+        <div style="display:flex; gap:10px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--border);">
+          <span class="badge badge-info">${r.type}</span>
+          <span style="font-size:13px;">${r.message}</span>
+        </div>`).join("");
+    }
+    loadRecommendations();
+  </script>
+</body>
+</html>

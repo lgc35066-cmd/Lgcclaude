@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>الري الذكي | LGC Smart Farm OS</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar"></nav>
+    <div class="content">
+      <header class="topbar" id="topbar"></header>
+      <main class="main-area">
+
+        <div class="grid grid-3" style="margin-bottom:18px;">
+          <div class="card stat-card">
+            <div class="stat-icon">🚰</div>
+            <div class="stat-label">المضخات النشطة</div>
+            <div class="stat-value">2 / 3</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-icon">🔀</div>
+            <div class="stat-label">الصمامات المفتوحة</div>
+            <div class="stat-value">4 / 10</div>
+          </div>
+          <div class="card stat-card">
+            <div class="stat-icon">💧</div>
+            <div class="stat-label">مياه اليوم المستخدمة</div>
+            <div class="stat-value">6,240 لتر</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-bottom:18px;">
+          <div class="card-header">
+            <h3>القطاعات الزراعية والتحكم اليدوي</h3>
+            <button class="btn btn-primary" onclick="alert('سيتم استدعاء POST /api/irrigation/logs/start')">تشغيل ري يدوي</button>
+          </div>
+          <table>
+            <thead><tr><th>القطاع</th><th>الصمام</th><th>الحالة</th><th>وضع التشغيل</th><th>إجراء</th></tr></thead>
+            <tbody id="zones-body"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>سجل الري (آخر العمليات)</h3></div>
+          <table>
+            <thead><tr><th>القطاع</th><th>الوضع</th><th>الكمية (لتر)</th><th>البداية</th><th>النهاية</th></tr></thead>
+            <tbody id="logs-body"></tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    buildSidebar("irrigation");
+    buildTopbar("إدارة الري الذكي");
+
+    const DEMO_ZONES = [
+      { name: "القطاع 1", valve: "V-01", status: "مغلق", mode: "آلي" },
+      { name: "القطاع 2", valve: "V-02", status: "مفتوح", mode: "آلي" },
+      { name: "القطاع 3", valve: "V-03", status: "مفتوح", mode: "يدوي" },
+      { name: "القطاع 4", valve: "V-04", status: "مغلق", mode: "آلي" },
+    ];
+    const DEMO_LOGS = [
+      { zone: "القطاع 2", mode: "آلي", liters: 1250, start: "06:00", end: "06:45" },
+      { zone: "القطاع 3", mode: "يدوي", liters: 800, start: "09:10", end: "09:30" },
+      { zone: "القطاع 1", mode: "آلي", liters: 1400, start: "أمس 06:00", end: "أمس 06:50" },
+    ];
+
+    document.getElementById("zones-body").innerHTML = DEMO_ZONES.map(z => `
+      <tr>
+        <td>${z.name}</td>
+        <td>${z.valve}</td>
+        <td><span class="dot ${z.status === 'مفتوح' ? 'dot-online' : 'dot-offline'}"></span>${z.status}</td>
+        <td>${z.mode}</td>
+        <td><button class="btn btn-outline" style="padding:6px 12px; font-size:12px;">${z.status === 'مفتوح' ? 'إغلاق' : 'فتح'}</button></td>
+      </tr>`).join("");
+
+    document.getElementById("logs-body").innerHTML = DEMO_LOGS.map(l => `
+      <tr><td>${l.zone}</td><td>${l.mode}</td><td>${l.liters}</td><td>${l.start}</td><td>${l.end}</td></tr>
+    `).join("");
+  </script>
+</body>
+</html>

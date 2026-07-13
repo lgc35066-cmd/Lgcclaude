@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>التقارير | LGC Smart Farm OS</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar"></nav>
+    <div class="content">
+      <header class="topbar" id="topbar"></header>
+      <main class="main-area">
+
+        <div class="card">
+          <div class="card-header">
+            <h3>التقارير الدورية</h3>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-outline" onclick="alert('تصدير PDF — يُنفَّذ عبر reportlab/WeasyPrint في الـ backend')">تصدير PDF</button>
+              <button class="btn btn-outline" onclick="alert('تصدير Excel — يُنفَّذ عبر openpyxl في الـ backend')">تصدير Excel</button>
+              <button class="btn btn-primary">إنشاء تقرير جديد</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>النوع</th><th>الفترة</th><th>المياه</th><th>الطاقة</th><th>الإنتاج</th><th>التنبيهات</th></tr></thead>
+            <tbody id="reports-body"></tbody>
+          </table>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="assets/js/app.js"></script>
+  <script>
+    buildSidebar("reports");
+    buildTopbar("التقارير");
+
+    const DEMO_REPORTS = [
+      { type: "يومي", period: "12 يوليو 2026", water: "6,240 لتر", energy: "42.5 kWh", yieldv: "—", alerts: 3 },
+      { type: "أسبوعي", period: "6 – 12 يوليو 2026", water: "41,800 لتر", energy: "296 kWh", yieldv: "1.2 طن", alerts: 11 },
+      { type: "شهري", period: "يونيو 2026", water: "178,500 لتر", energy: "1,240 kWh", yieldv: "5.4 طن", alerts: 34 },
+    ];
+
+    document.getElementById("reports-body").innerHTML = DEMO_REPORTS.map(r => `
+      <tr><td>${r.type}</td><td>${r.period}</td><td>${r.water}</td><td>${r.energy}</td><td>${r.yieldv}</td><td>${r.alerts}</td></tr>
+    `).join("");
+  </script>
+</body>
+</html>

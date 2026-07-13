@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>لوحة التحكم | LGC Smart Farm OS</title>
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <nav class="sidebar" id="sidebar"></nav>
+
+    <div class="content">
+      <header class="topbar" id="topbar"></header>
+
+      <main class="main-area">
+
+        <div class="grid grid-4" id="stat-cards" style="margin-bottom:18px;">
+          <!-- تُملأ عبر JS -->
+        </div>
+
+        <div class="grid grid-2" style="margin-bottom:18px;">
+          <div class="card">
+            <div class="card-header"><h3>استهلاك المياه (آخر 7 أيام)</h3></div>
+            <div class="chart-box"><canvas id="waterChart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-header"><h3>إنتاج واستهلاك الطاقة (kWh)</h3></div>
+            <div class="chart-box"><canvas id="energyChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="card-header">
+              <h3>آخر التنبيهات</h3>
+              <a href="reports.html" style="font-size:12px; color:var(--green-600);">عرض الكل</a>
+            </div>
+            <table>
+              <thead><tr><th>الفئة</th><th>الرسالة</th><th>الخطورة</th></tr></thead>
+              <tbody id="alerts-body"></tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3>درجة حرارة الجو (°C)</h3></div>
+            <div class="chart-box"><canvas id="tempChart"></canvas></div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script>
+    buildSidebar("dashboard");
+    buildTopbar("لوحة التحكم الرئيسية");
+
+    const statMeta = [
+      { key: "online_sensors", label: "الحساسات المتصلة", icon: "📡", suffix: (v, s) => `${v} / ${s.active_sensors}` },
+      { key: "water_level_percent", label: "منسوب المياه", icon: "💧", suffix: (v) => `${v}%` },
+      { key: "energy_production_kwh", label: "إنتاج الطاقة", icon: "⚡", suffix: (v) => `${v} kWh` },
+      { key: "open_alerts", label: "تنبيهات مفتوحة", icon: "🔔", suffix: (v) => `${v}` },
+    ];
+
+    function renderStats(summary) {
+      const container = document.getElementById("stat-cards");
+      container.innerHTML = statMeta.map(m => `
+        <div class="card stat-card">
+          <div class="stat-icon">${m.icon}</div>
+          <div class="stat-label">${m.label}</div>
+          <div class="stat-value">${m.suffix(summary[m.key], summary)}</div>
+        </div>
+      `).join("");
+    }
+
+    const DEMO_ALERTS = [
+      { category: "ري", message: "القطاع الثاني يحتاج إلى ري خلال الساعات القادمة", severity: "متوسط" },
+      { category: "طاقة", message: "شحن البطارية رقم 2 منخفض (22٪)", severity: "عالي" },
+      { category: "حساس", message: "حساس رطوبة التربة S-14 غير متصل منذ 3 ساعات", severity: "منخفض" },
+    ];
+
+    function severityBadge(sev) {
+      const map = { "منخفض": "badge-info", "متوسط": "badge-warning", "عالي": "badge-danger", "حرج": "badge-danger" };
+      return `<span class="badge ${map[sev] || "badge-info"}">${sev}</span>`;
+    }
+
+    function renderAlerts(alerts) {
+      document.getElementById("alerts-body").innerHTML = alerts.map(a => `
+        <tr><td>${a.category}</td><td>${a.message}</td><td>${severityBadge(a.severity)}</td></tr>
+      `).join("");
+    }
+
+    async function loadAlerts() {
+      try {
+        const data = await apiRequest("/alerts/?resolved=false");
+        renderAlerts(data.length ? data : DEMO_ALERTS);
+      } catch (e) {
+        renderAlerts(DEMO_ALERTS);
+      }
+    }
+
+    const days = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
+    const chartTheme = { grid: "rgba(150,150,150,0.15)", text: "#5b6b61" };
+
+    function makeLineChart(ctx, label, data, color) {
+      return new Chart(ctx, {
+        type: "line",
+        data: { labels: days, datasets: [{ label, data, borderColor: color, backgroundColor: color + "22", fill: true, tension: 0.35, pointRadius: 3 }] },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { color: chartTheme.grid }, ticks: { color: chartTheme.text } },
+            y: { grid: { color: chartTheme.grid }, ticks: { color: chartTheme.text } },
+          },
+        },
+      });
+    }
+
+    (async function init() {
+      const summary = await loadSummary();
+      renderStats(summary);
+      await loadAlerts();
+
+      makeLineChart(document.getElementById("waterChart"), "المياه (%)", DEMO_DATA.waterSeries, "#2b7cd6");
+      makeLineChart(document.getElementById("tempChart"), "الحرارة (°C)", DEMO_DATA.tempSeries, "#e0a721");
+
+      new Chart(document.getElementById("energyChart"), {
+        type: "bar",
+        data: {
+          labels: days,
+          datasets: [
+            { label: "الإنتاج", data: DEMO_DATA.energySeries.production, backgroundColor: "#2ea85c" },
+            { label: "الاستهلاك", data: DEMO_DATA.energySeries.consumption, backgroundColor: "#c9a44c" },
+          ],
+        },
+        options: {
+          plugins: { legend: { labels: { color: chartTheme.text } } },
+          scales: {
+            x: { grid: { color: chartTheme.grid }, ticks: { color: chartTheme.text } },
+            y: { grid: { color: chartTheme.grid }, ticks: { color: chartTheme.text } },
+          },
+        },
+      });
+    })();
+  </script>
+</body>
+</html>
